@@ -13,19 +13,26 @@
 #include <FMX.StdCtrls.hpp>
 #include <FMX.Types.hpp>
 #include <System.Rtti.hpp>
+#include "DataTable.h"
 //---------------------------------------------------------------------------
 class TTestForm : public TForm
 {
 __published:	// IDE-managed Components
-	TStringGrid *StringGrid1;
+	TStringGrid *DataGrid1;
 	TStringGrid *StringGrid2;
 	TStringGrid *StringGrid3;
 	TStringGrid *StringGrid4;
 	TLabel *Label1;
 	TLabel *Label2;
 	TButton *Button1;
+	TStringGrid *OutputGrid;
+	TButton *Button2;
 	void __fastcall Button1Click(TObject *Sender);
+	void __fastcall Button2Click(TObject *Sender);
 private:	// User declarations
+	void __fastcall PopulateGrids();
+
+	TDataTable VirtualTable;
 public:		// User declarations
 	__fastcall TTestForm(TComponent* Owner);
 };

@@ -163,6 +163,46 @@ TDataRow::~TDataRow()
 	
 }
 
+void TDataRow::Insert( std::string Key, TDataValue Value )
+{
+	// Not passing the key by reference saves us a type headache
+    // Possible room for improvement
+	FRow.insert( std::make_pair( Key, Value ) );
+}
+
+TDataValue *TDataRow::ValueByKey( std::string Key )
+{
+	TDataValue *Result = NULL;
+
+	if( Key.length() )
+		{
+		std::multimap< std::string, TDataValue >::iterator it;
+		it = FRow.find( Key );
+		if( it != FRow.end() )
+			{
+			Result = &it->second;
+			}
+		}
+	return Result;
+}
+
+std::string TDataRow::GetKey( int Position )
+{
+	if( FRow.size() > Position && Position >= 0 )
+		{
+		std::multimap< std::string, TDataValue >::iterator it;
+		it = FRow.begin();
+		int Count = 0;
+		while( Count != Position && Count < FRow.size() )
+			{
+			it++;
+			Count++;
+			}
+        return it->first;
+		}
+
+}
+
 #pragma endregion
 
 #pragma region TDataTable definition
@@ -175,6 +215,27 @@ TDataTable::TDataTable()
 TDataTable::~TDataTable()
 {
 
+}
+
+void TDataTable::Add( TDataRow &Row )
+{
+	FRows.push_back( Row );
+}
+
+void TDataTable::Clear( )
+{
+	FRows.clear();
+}
+
+TDataRow *TDataTable::GetRow( int Row )
+{
+	TDataRow *Result = NULL;
+	if( FRows.size() > Row && Row >= 0 )
+		{
+		Result = &FRows.at( Row );
+
+		}
+	return Result;
 }
 
 #pragma endregion

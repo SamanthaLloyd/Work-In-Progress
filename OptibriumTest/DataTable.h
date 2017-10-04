@@ -44,6 +44,10 @@ private:
 public:
 	TDataRow();
 	~TDataRow();
+
+	void Insert( std::string Key, TDataValue Value );
+	TDataValue *TDataRow::ValueByKey( std::string Key );
+	std::string TDataRow::GetKey( int Position );
 };
 
 class TDataTable
@@ -53,4 +57,8 @@ private:
 public:
 	TDataTable();
 	~TDataTable();
+
+	void Clear( );
+	void Add( TDataRow &Row );
+	TDataRow *GetRow( int i );
 };
