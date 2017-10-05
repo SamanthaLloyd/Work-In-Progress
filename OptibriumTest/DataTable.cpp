@@ -246,4 +246,39 @@ int TDataTable::RowCount()
     return FRows.size();
 }
 
+// Operators
+
+TDataTable & TDataTable::operator+=(const TDataTable &rhs)
+{
+    // This will add the contents of rhs to this
+	for( int Incoming = 0; Incoming < rhs.RowCount(); Incoming++ )
+		{
+		// Look for this row in the table
+		bool Found = false;
+		for( int Current = 0; Current < this->RowCount() && !Found; Current++ )
+			{
+			if( rhs.GetRow( Incoming ) == this->GetRow( Current ) )
+				{
+				Found = true;
+				}
+			}
+
+		if( !Found )
+			{
+			// It's not in there, insert it
+
+
+            }
+        }
+	return *this
+}
+
+
+const TDataTable TDataTable::operator+(const TDataTable &OtherTable) const
+{
+    // use the += operator to simplify this
+	return TDataTable(*this) += OtherTable;
+}
+
+
 #pragma endregion

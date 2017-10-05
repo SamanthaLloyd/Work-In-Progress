@@ -65,9 +65,6 @@ void __fastcall TTestForm::Button1Click(TObject *Sender)
 		RowContainer.Insert( AnsiString( DataGrid1->Model->Columns[1]->Header ).c_str(), TDataValue( Temp ) );
 		RowContainer.Insert( AnsiString( DataGrid1->Model->Columns[2]->Header ).c_str(), TDataValue( StrToIntDef( DataGrid1->Model->Cells[2][Row], 0 ) ) );
 
-
-		int Melandru = RowContainer.ValueCount();
-
 		//Add the row to the table
 		VirtualTable.Add( RowContainer );
 		}
@@ -80,8 +77,6 @@ void __fastcall TTestForm::Button1Click(TObject *Sender)
 
 void __fastcall TTestForm::Button2Click(TObject *Sender)
 {
-
-
 	PopulateOutputGrid( OutputGrid, &VirtualTable );
 
 }

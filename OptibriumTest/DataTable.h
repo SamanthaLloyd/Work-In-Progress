@@ -74,4 +74,9 @@ public:
 	void Add( TDataRow &Row );
 	TDataRow *GetRow( int i );
 	int RowCount();
+
+	//Operators
+
+	TDataTable & TDataTable::operator+=(const TDataTable &rhs);
+	const TDataTable TDataTable::operator+(const TDataTable &OtherTable) const;
 };
