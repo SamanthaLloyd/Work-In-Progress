@@ -1,9 +1,20 @@
 #pragma once
 #include <string>
+#include <sstream>
 #include <map>
 #include <unordered_map>
 #include <vector>
 
+template<class T>
+std::string TToString(T Value)
+{
+	std::stringstream StringStream;
+	std::string String;
+	StringStream << Value;
+	String = StringStream.str();
+
+	return String;
+}
 
 enum DataValueType { dvtUnknown, dvtInt, dvtFloat, dvtString };
 
@@ -48,6 +59,7 @@ public:
 	void Insert( std::string Key, TDataValue Value );
 	TDataValue *TDataRow::ValueByKey( std::string Key );
 	std::string TDataRow::GetKey( int Position );
+    int ValueCount();
 };
 
 class TDataTable
@@ -61,4 +73,5 @@ public:
 	void Clear( );
 	void Add( TDataRow &Row );
 	TDataRow *GetRow( int i );
+	int RowCount();
 };

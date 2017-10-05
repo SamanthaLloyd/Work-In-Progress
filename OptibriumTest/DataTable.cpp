@@ -107,7 +107,6 @@ float TDataValue::AsFloat()
 
 std::string TDataValue::AsString()
 {
-	char *ResultChar;
 	std::string Result = "";
 	switch (FOriginalType)
 	{
@@ -116,12 +115,10 @@ std::string TDataValue::AsString()
 		Result = FString;
 		break;
 	case dvtInt:
-		sprintf(ResultChar,"%d",FInt);
-		Result = ResultChar;
+		Result = TToString( FInt );
 		break;
 	case dvtFloat:
-		sprintf(ResultChar,"%f",FFloat);
-		Result = ResultChar;
+		Result = TToString( FFloat );
 		break;
 	}
 	return Result;
@@ -188,6 +185,7 @@ TDataValue *TDataRow::ValueByKey( std::string Key )
 
 std::string TDataRow::GetKey( int Position )
 {
+	std::string Result = "";
 	if( FRow.size() > Position && Position >= 0 )
 		{
 		std::multimap< std::string, TDataValue >::iterator it;
@@ -198,9 +196,14 @@ std::string TDataRow::GetKey( int Position )
 			it++;
 			Count++;
 			}
-        return it->first;
+		Result = it->first;
 		}
+	return Result;
+}
 
+int TDataRow::ValueCount()
+{
+    return FRow.size();
 }
 
 #pragma endregion
@@ -236,6 +239,11 @@ TDataRow *TDataTable::GetRow( int Row )
 
 		}
 	return Result;
+}
+
+int TDataTable::RowCount()
+{
+    return FRows.size();
 }
 
 #pragma endregion

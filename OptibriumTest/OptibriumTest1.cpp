@@ -13,10 +13,10 @@ TTestForm *TestForm;
 __fastcall TTestForm::TTestForm(TComponent* Owner)
 	: TForm(Owner)
 {
-	PopulateGrids();
+	PopulateSourceDataGrids();
 }
 //---------------------------------------------------------------------------
-void __fastcall TTestForm::PopulateGrids()
+void __fastcall TTestForm::PopulateSourceDataGrids()
 {
 	//Populating the 4 grids
 
@@ -65,25 +65,83 @@ void __fastcall TTestForm::Button1Click(TObject *Sender)
 		RowContainer.Insert( AnsiString( DataGrid1->Model->Columns[1]->Header ).c_str(), TDataValue( Temp ) );
 		RowContainer.Insert( AnsiString( DataGrid1->Model->Columns[2]->Header ).c_str(), TDataValue( StrToIntDef( DataGrid1->Model->Cells[2][Row], 0 ) ) );
 
+
+		int Melandru = RowContainer.ValueCount();
+
 		//Add the row to the table
 		VirtualTable.Add( RowContainer );
 		}
 
+	int Lyssa = VirtualTable.RowCount();
+	Lyssa++;
 }
 //---------------------------------------------------------------------------
 
 
 void __fastcall TTestForm::Button2Click(TObject *Sender)
 {
+
+
+	PopulateOutputGrid( OutputGrid, &VirtualTable );
+
+}
+
+void __fastcall TTestForm::PopulateOutputGrid( TStringGrid *OutputGrid, TDataTable *OutputTable )
+{
 	// clear the current output
 	OutputGrid->ClearColumns();
 
-    // Fill the table
-	TDataRow *Row1 = VirtualTable.GetRow(0);
-	if( Row1 )
+	// Loop through the data source
+	for( int i = 0; i < OutputTable->RowCount(); i++ )
 		{
-		Row1->
-        }
+		// Get the row
+		TDataRow *Row1 = OutputTable->GetRow(i);
+		if( Row1 )
+			{
+			int Melandru = Row1->ValueCount();
+
+			for( int j = 0; j < Row1->ValueCount(); j++ )
+				{
+				// Look to see if the grid already has a header with this name
+				std::string HeaderName = Row1->GetKey( j );
+				int ColumnToInsert = IsHeaderInGrid( OutputGrid, HeaderName );
+				if( ColumnToInsert == -1 )
+					{
+					// It doesn't, need to add a column with the header
+					TColumn *NewColumn = new TColumn( OutputGrid );
+					NewColumn->Header = HeaderName.c_str();
+					OutputGrid->Model->InsertColumn( OutputGrid->ColumnCount, NewColumn );
+
+					// Update the insertion variable
+					ColumnToInsert = OutputGrid->ColumnCount - 1;
+					}
+
+				// Insert the data
+				OutputGrid->Model->Cells[ ColumnToInsert ][ i ] = Row1->ValueByKey( HeaderName )->AsString().c_str();
+				}
+			}
+		}
 }
 //---------------------------------------------------------------------------
+int __fastcall TTestForm::IsHeaderInGrid( TStringGrid *Grid, std::string String )
+{
+	// This function will return -1 if the header isn't in the grid, or the column index
+	int Result = -1;
+	if( Grid && String.length() )
+		{
+		// Loop through the columns, stop if we find a match or the end of the columns
+		for( int i = 0; i < Grid->ColumnCount && Result == -1; i++ )
+			{
+			// Get the header name and compare it with the incoming string
+			AnsiString Header = Grid->Model->Columns[i]->Header;
+            // Do a case insensitive compare
+			if( lstrcmpi( Header.c_str(), String.c_str() ) == 0 )
+				{
+				Result = i;
+                }
 
+            }
+        }
+
+	return Result;
+}

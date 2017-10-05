@@ -30,7 +30,9 @@ __published:	// IDE-managed Components
 	void __fastcall Button1Click(TObject *Sender);
 	void __fastcall Button2Click(TObject *Sender);
 private:	// User declarations
-	void __fastcall PopulateGrids();
+	void __fastcall PopulateSourceDataGrids();
+	void __fastcall PopulateOutputGrid( TStringGrid *OutputGrid, TDataTable *OutputTable );
+	int __fastcall IsHeaderInGrid( TStringGrid *Grid, std::string String );
 
 	TDataTable VirtualTable;
 public:		// User declarations

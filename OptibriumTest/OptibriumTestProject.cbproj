@@ -158,6 +158,9 @@
         <CppCompile Include="DataTable.cpp">
             <BuildOrder>3</BuildOrder>
         </CppCompile>
+        <None Include="DataTable.h">
+            <BuildOrder>4</BuildOrder>
+        </None>
         <CppCompile Include="OptibriumTest1.cpp">
             <Form>TestForm</Form>
             <FormType>fmx</FormType>
@@ -254,20 +257,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName=".\Win32\Debug\OptibriumTestProject.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>OptibriumTestProject.exe</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName=".\Win32\Debug\OptibriumTestProject.tds" Configuration="Debug" Class="DebugSymbols">
+                <DeployFile LocalName="OptibriumTestProject.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
-                        <RemoteName>OptibriumTestProject.tds</RemoteName>
+                        <RemoteName>OptibriumTestProject.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -278,6 +275,12 @@
                 </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\iossimulator\libPCRE.dylib" Class="DependencyModule">
                     <Platform Name="iOSSimulator">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="OptibriumTestProject.tds" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win32">
+                        <RemoteName>OptibriumTestProject.tds</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
