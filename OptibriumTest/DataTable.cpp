@@ -146,6 +146,52 @@ bool TDataValue::IsString()
 		return false;
 }
 
+bool TDataValue::operator==(const TDataValue &Incoming)
+{
+	bool Result = false;
+	if( this == &Incoming )
+		{
+		// Check for self equalling
+		Result = true;
+		}
+	else
+		{
+		//Check the relevant properties
+		if( this->FSet == Incoming.FSet &&
+			this->FOriginalType == Incoming.FOriginalType )
+			{
+			switch( this->FOriginalType )
+				{
+				case dvtInt:
+					if( this->FInt == Incoming.FInt )
+						{
+						Result = true;
+						}
+				case dvtFloat:
+					if( this->FFloat == Incoming.FFloat )
+						{
+						Result = true;
+						}
+				case dvtString:
+					if( this->FString == Incoming.FString )
+						{
+						Result = true;
+						}
+				default:
+					Result = true;
+				}
+			}
+		}
+    return Result;
+}
+
+int TDataValue::Compare( const TDataValue &Incoming )
+{
+	int Result = 0;
+
+	return Result;
+}
+
 #pragma endregion
 
 #pragma region TDataRow definition
@@ -201,9 +247,20 @@ std::string TDataRow::GetKey( int Position )
 	return Result;
 }
 
-int TDataRow::ValueCount()
+int TDataRow::ValueCount() const
 {
     return FRow.size();
+}
+
+bool TDataRow::operator==(const TDataRow &Incoming)
+{
+	std::multimap< std::string, TDataValue >::iterator it1;
+	std::multimap< std::string, TDataValue >::iterator it2;
+	for( it1 = FRow.begin(), it2 = Incoming.begin(); it1 != FRow.end() && it2 != it2.end(); it1++ it2++ )
+		{
+
+        }
+
 }
 
 #pragma endregion
@@ -241,7 +298,18 @@ TDataRow *TDataTable::GetRow( int Row )
 	return Result;
 }
 
-int TDataTable::RowCount()
+TDataRow TDataTable::GetRow( int Row ) const
+{
+	TDataRow Result;
+	if( FRows.size() > Row && Row >= 0 )
+		{
+		Result = FRows.at( Row );
+
+		}
+	return Result;
+}
+
+int TDataTable::RowCount() const
 {
     return FRows.size();
 }

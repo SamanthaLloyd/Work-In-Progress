@@ -46,6 +46,9 @@ public:
 	bool Set(int ValueIn);
 	bool Set(float ValueIn);
 	bool Set(std::string ValueIn);
+
+	bool operator==(const TDataValue &Incoming);
+	int Compare( const TDataValue &Incoming );
 };
 
 class TDataRow
@@ -59,7 +62,9 @@ public:
 	void Insert( std::string Key, TDataValue Value );
 	TDataValue *TDataRow::ValueByKey( std::string Key );
 	std::string TDataRow::GetKey( int Position );
-    int ValueCount();
+	int ValueCount() const;
+
+	bool operator==(const TDataRow &Incoming);
 };
 
 class TDataTable
@@ -73,8 +78,8 @@ public:
 	void Clear( );
 	void Add( TDataRow &Row );
 	TDataRow *GetRow( int i );
-	int RowCount();
-
+	int RowCount() const ;
+    TDataRow GetRow( int Row ) const;
 	//Operators
 
 	TDataTable & TDataTable::operator+=(const TDataTable &rhs);
