@@ -18,6 +18,7 @@ TDataValue::TDataValue()
 TDataValue::TDataValue(const TDataValue &ToCopy)
 {
 	// Copy constructor
+    TDataValue();
 	FOriginalType = ToCopy.FOriginalType;
 	FSet = ToCopy.FSet;
 	FInt = ToCopy.FInt;
@@ -244,9 +245,9 @@ void TDataRow::Insert( std::string Key, TDataValue Value )
 	FRow.insert( std::make_pair( Key, Value ) );
 }
 
-TDataValue *TDataRow::ValueByKey( std::string Key )
+TDataValue TDataRow::ValueByKey( std::string Key )
 {
-	TDataValue *Result = NULL;
+	TDataValue Result;
 
 	if( Key.length() )
 		{
@@ -254,20 +255,20 @@ TDataValue *TDataRow::ValueByKey( std::string Key )
 		it = FRow.find( Key );
 		if( it != FRow.end() )
 			{
-			Result = &it->second;
+			Result = it->second;
 			}
 		}
 	return Result;
 }
 
-std::string TDataRow::GetKey( int Position )
+std::string TDataRow::GetKey( unsigned int Position )
 {
 	std::string Result = "";
-	if( FRow.size() > Position && Position >= 0 )
+	if( FRow.size() > Position )
 		{
 		std::multimap< std::string, TDataValue >::iterator it;
 		it = FRow.begin();
-		int Count = 0;
+		unsigned int Count = 0;
 		while( Count != Position && Count < FRow.size() )
 			{
 			it++;
@@ -280,7 +281,7 @@ std::string TDataRow::GetKey( int Position )
 
 int TDataRow::ValueCount() const
 {
-    return FRow.size();
+	return FRow.size();
 }
 
 bool TDataRow::operator==(const TDataRow &Incoming)
@@ -293,7 +294,9 @@ bool TDataRow::operator==(const TDataRow &Incoming)
 	std::multimap< std::string, TDataValue >::const_iterator it2 = Incoming.FRow.begin();
 	for( ; it1 != FRow.end() && it2 != Incoming.FRow.end() && Result; it1++, it2++ )
 		{
-		if( &it1 != &it2 )
+		TDataValue Temp1( it1->second );
+		TDataValue Temp2( it2->second );
+		if( it1->first != it2->first || Temp1 != Temp2 )
 			{
 			Result = false;
 			}
@@ -326,10 +329,10 @@ void TDataTable::Clear( )
 	FRows.clear();
 }
 
-TDataRow *TDataTable::GetRow( int Row )
+TDataRow *TDataTable::GetRow( unsigned int Row )
 {
 	TDataRow *Result = NULL;
-	if( FRows.size() > Row && Row >= 0 )
+	if( FRows.size() > Row )
 		{
 		Result = &FRows.at( Row );
 
@@ -337,10 +340,10 @@ TDataRow *TDataTable::GetRow( int Row )
 	return Result;
 }
 
-TDataRow TDataTable::GetRow( int Row ) const
+TDataRow TDataTable::GetRow( unsigned int Row ) const
 {
 	TDataRow Result;
-	if( FRows.size() > Row && Row >= 0 )
+	if( FRows.size() > Row )
 		{
 		Result = FRows.at( Row );
 
@@ -364,9 +367,9 @@ TDataTable & TDataTable::operator+=(const TDataTable &rhs)
 		{
 		// Look for this row in the table
 		bool Found = false;
-		for( int Current = 0; Current < *this.RowCount() && !Found; Current++ )
+		for( int Current = 0; Current < RowCount() && !Found; Current++ )
 			{
-			if( rhs.GetRow( Incoming ) == *this.GetRow( Current ) )
+			if( rhs.GetRow( Incoming ) == *GetRow( Current ) )
 				{
 				Found = true;
 				}
@@ -378,7 +381,7 @@ TDataTable & TDataTable::operator+=(const TDataTable &rhs)
 			FRows.push_back( TDataRow( rhs.GetRow( Incoming ) ) );
 			}
 		}
-	return *this
+	return *this;
 }
 
 

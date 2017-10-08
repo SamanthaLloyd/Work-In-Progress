@@ -19,18 +19,21 @@ class TTestForm : public TForm
 {
 __published:	// IDE-managed Components
 	TStringGrid *DataGrid1;
-	TStringGrid *StringGrid2;
+	TStringGrid *DataGrid2;
 	TStringGrid *StringGrid3;
 	TStringGrid *StringGrid4;
 	TLabel *Label1;
 	TLabel *Label2;
-	TButton *Button1;
 	TStringGrid *OutputGrid;
-	TButton *Button2;
+	TButton *OutputGrid1Button;
+	TButton *Output1Plus2Button;
 	void __fastcall Button1Click(TObject *Sender);
-	void __fastcall Button2Click(TObject *Sender);
+	void __fastcall OutputGrid1ButtonClick(TObject *Sender);
+	void __fastcall Output1Plus2ButtonClick(TObject *Sender);
 private:	// User declarations
 	void __fastcall PopulateSourceDataGrids();
+
+	void __fastcall LoadTable( TStringGrid *Grid, TDataTable *Table);
 	void __fastcall PopulateOutputGrid( TStringGrid *OutputGrid, TDataTable *OutputTable );
 	int __fastcall IsHeaderInGrid( TStringGrid *Grid, std::string String );
 

@@ -63,11 +63,13 @@ public:
 	~TDataRow();
 
 	void Insert( std::string Key, TDataValue Value );
-	TDataValue *TDataRow::ValueByKey( std::string Key );
-	std::string TDataRow::GetKey( int Position );
+	TDataValue TDataRow::ValueByKey( std::string Key );
+	std::string TDataRow::GetKey( unsigned int Position );
 	int ValueCount() const;
 
 	bool operator==(const TDataRow &Incoming);
+	bool operator!=(const TDataRow &Incoming);
+	int Compare(const TDataRow &Incoming);
 };
 
 class TDataTable
@@ -80,9 +82,9 @@ public:
 
 	void Clear( );
 	void Add( TDataRow &Row );
-	TDataRow *GetRow( int i );
+	TDataRow *GetRow( unsigned int i );
 	int RowCount() const ;
-    TDataRow GetRow( int Row ) const;
+	TDataRow GetRow( unsigned int Row ) const;
 	//Operators
 
 	TDataTable & TDataTable::operator+=(const TDataTable &rhs);
