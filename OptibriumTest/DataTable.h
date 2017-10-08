@@ -29,6 +29,7 @@ private:
 
 public:
 	TDataValue();
+	TDataValue(const TDataValue &ToCopy);
 	TDataValue(int ValueIn);
 	TDataValue(float ValueIn);
 	TDataValue(std::string ValueIn);
@@ -48,6 +49,7 @@ public:
 	bool Set(std::string ValueIn);
 
 	bool operator==(const TDataValue &Incoming);
+	bool operator!=(const TDataValue &Incoming);
 	int Compare( const TDataValue &Incoming );
 };
 
@@ -57,6 +59,7 @@ private:
 	std::multimap< std::string, TDataValue >FRow;
 public:
 	TDataRow();
+    TDataRow( const TDataRow &ToCopy );
 	~TDataRow();
 
 	void Insert( std::string Key, TDataValue Value );

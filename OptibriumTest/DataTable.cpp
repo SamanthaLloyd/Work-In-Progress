@@ -14,6 +14,18 @@ TDataValue::TDataValue()
 	FFloat = 0.0;
 	FString = "";
 }
+
+TDataValue::TDataValue(const TDataValue &ToCopy)
+{
+	// Copy constructor
+	FOriginalType = ToCopy.FOriginalType;
+	FSet = ToCopy.FSet;
+	FInt = ToCopy.FInt;
+	FFloat = ToCopy.FFloat;
+	FString = ToCopy.FString;
+
+}
+
 TDataValue::TDataValue(int ValueIn)
 {
 	TDataValue();
@@ -79,7 +91,7 @@ int TDataValue::AsInt()
 		Result = FFloat;
 		break;
 	}
-	
+
 	return Result;
 }
 
@@ -182,12 +194,25 @@ bool TDataValue::operator==(const TDataValue &Incoming)
 				}
 			}
 		}
-    return Result;
+	return Result;
+}
+
+bool TDataValue::operator!=(const TDataValue &Incoming)
+{
+	bool Result = true;
+	if( *this == Incoming )
+		{
+		Result = false;
+		}
+	return Result;
 }
 
 int TDataValue::Compare( const TDataValue &Incoming )
 {
 	int Result = 0;
+	// Returns 0 if this is the same as Incoming
+	// If data types are different, returns this datatype - incoming data type
+	// If data types are the same, returns this vaue - incoming value
 
 	return Result;
 }
@@ -198,12 +223,18 @@ int TDataValue::Compare( const TDataValue &Incoming )
 
 TDataRow::TDataRow()
 {
-	
+
+}
+
+TDataRow::TDataRow( const TDataRow &ToCopy )
+{
+	// Copy constructor
+	FRow = ToCopy.FRow;
 }
 
 TDataRow::~TDataRow()
 {
-	
+
 }
 
 void TDataRow::Insert( std::string Key, TDataValue Value )
@@ -254,13 +285,21 @@ int TDataRow::ValueCount() const
 
 bool TDataRow::operator==(const TDataRow &Incoming)
 {
-	std::multimap< std::string, TDataValue >::iterator it1;
-	std::multimap< std::string, TDataValue >::iterator it2;
-	for( it1 = FRow.begin(), it2 = Incoming.begin(); it1 != FRow.end() && it2 != it2.end(); it1++ it2++ )
+	// Compare each item in the map in turn
+	// Order is defined by map by key sort
+	// 1 to 1, 2 to 2 etc
+	bool Result = true;
+	std::multimap< std::string, TDataValue >::const_iterator it1 = FRow.begin();
+	std::multimap< std::string, TDataValue >::const_iterator it2 = Incoming.FRow.begin();
+	for( ; it1 != FRow.end() && it2 != Incoming.FRow.end() && Result; it1++, it2++ )
 		{
+		if( &it1 != &it2 )
+			{
+			Result = false;
+			}
 
-        }
-
+		}
+	return Result;
 }
 
 #pragma endregion
@@ -311,21 +350,23 @@ TDataRow TDataTable::GetRow( int Row ) const
 
 int TDataTable::RowCount() const
 {
-    return FRows.size();
+	return FRows.size();
 }
 
 // Operators
 
 TDataTable & TDataTable::operator+=(const TDataTable &rhs)
 {
-    // This will add the contents of rhs to this
+	// Add one table to this table
+
+	// This will add the contents of rhs to this
 	for( int Incoming = 0; Incoming < rhs.RowCount(); Incoming++ )
 		{
 		// Look for this row in the table
 		bool Found = false;
-		for( int Current = 0; Current < this->RowCount() && !Found; Current++ )
+		for( int Current = 0; Current < *this.RowCount() && !Found; Current++ )
 			{
-			if( rhs.GetRow( Incoming ) == this->GetRow( Current ) )
+			if( rhs.GetRow( Incoming ) == *this.GetRow( Current ) )
 				{
 				Found = true;
 				}
@@ -333,18 +374,17 @@ TDataTable & TDataTable::operator+=(const TDataTable &rhs)
 
 		if( !Found )
 			{
-			// It's not in there, insert it
-
-
-            }
-        }
+			// It's not in there, make a copy of it & insert it into our table
+			FRows.push_back( TDataRow( rhs.GetRow( Incoming ) ) );
+			}
+		}
 	return *this
 }
 
 
 const TDataTable TDataTable::operator+(const TDataTable &OtherTable) const
 {
-    // use the += operator to simplify this
+	// use the += operator to simplify this
 	return TDataTable(*this) += OtherTable;
 }
 
