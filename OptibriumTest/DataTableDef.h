@@ -56,26 +56,39 @@ public:
 
 	bool operator == ( const TDataValue &Incoming );
 	bool operator != ( const TDataValue &Incoming );
-	int Compare( const TDataValue &Incoming );
+	bool operator < ( const TDataValue &Incoming );
+
 };
 
 class TDataRow
 {
 private:
-	std::multimap< std::string, TDataValue >FRow;
+
 public:
 	TDataRow();
-    TDataRow( const TDataRow &ToCopy );
+	TDataRow( const TDataRow &ToCopy );
+//    TDataRow( TDataRow &&ToCopy );
 	~TDataRow();
+    std::multimap< std::string, TDataValue >FRow;
 
 	void Insert( std::string Key, TDataValue Value );
-	TDataValue TDataRow::ValueByKey( std::string Key );
-	std::string TDataRow::GetKey( unsigned int Position );
+	TDataValue TDataRow::ValueByKey( std::string Key ) const;
+	std::string TDataRow::GetKey( unsigned int Position ) const;
 	int ValueCount() const;
 
 	bool operator==(const TDataRow &Incoming);
 	bool operator!=(const TDataRow &Incoming);
-	int Compare(const TDataRow &Incoming);
+	TDataRow &operator=(TDataRow Incoming);  // Copy assignment
+//	TDataRow &operator=(const TDataRow &&Incoming); // Move assignment
+// 	friend bool operator<(const TDataRow &First, const TDataRow &Second);
+	bool operator<( const TDataRow &Incoming );
+
+	std::string ToString();
+};
+
+struct less_than_key
+{
+	bool operator()( const TDataRow &Row1, const TDataRow &Row2 );
 };
 
 class TDataTable
@@ -95,6 +108,15 @@ public:
 
 	TDataTable & TDataTable::operator+=(const TDataTable &rhs);
 	const TDataTable TDataTable::operator+(const TDataTable &OtherTable) const;
+
+	void Sort();
+
+	TDataTable SetUnion( TDataTable &Table1 );
+	TDataTable SetDifference( TDataTable &Table1 );
+	TDataTable Intersection( TDataTable &Table1 );
+	std::string ToString();
 };
+
+
 
 #endif

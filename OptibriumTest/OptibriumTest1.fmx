@@ -2,7 +2,7 @@ object TestForm: TTestForm
   Left = 0
   Top = 0
   Caption = 'Optibrium Test - Samantha Strauss'
-  ClientHeight = 430
+  ClientHeight = 613
   ClientWidth = 1114
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -90,5 +90,24 @@ object TestForm: TTestForm
     TabOrder = 9
     Text = 'IntersectionButton'
     OnClick = IntersectionButtonClick
+  end
+  object Button1: TButton
+    Position.X = 392.000000000000000000
+    Position.Y = 240.000000000000000000
+    TabOrder = 10
+    Text = 'Button1'
+    OnClick = Button1Click
+  end
+  object Memo1: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Position.X = 320.000000000000000000
+    Position.Y = 352.000000000000000000
+    Size.Width = 401.000000000000000000
+    Size.Height = 257.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 12
+    Viewport.Width = 397.000000000000000000
+    Viewport.Height = 253.000000000000000000
   end
 end

@@ -14,6 +14,7 @@
 #include <FMX.Types.hpp>
 #include <System.Rtti.hpp>
 #include "DataTableDef.h"
+#include <FMX.Memo.hpp>
 //---------------------------------------------------------------------------
 class TTestForm : public TForm
 {
@@ -28,6 +29,8 @@ __published:	// IDE-managed Components
 	TButton *SetUnionButton;
 	TButton *SetDifferencesButton;
 	TButton *IntersectionButton;
+	TButton *Button1;
+	TMemo *Memo1;
 	void __fastcall Button1Click(TObject *Sender);
 	void __fastcall OutputGrid1ButtonClick(TObject *Sender);
 	void __fastcall Output1Plus2ButtonClick(TObject *Sender);

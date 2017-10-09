@@ -84,11 +84,7 @@ void __fastcall TTestForm::PopulateSourceDataGrids()
 	DataGrid2->Model->Cells[2][3] = "290";
 
 }
-void __fastcall TTestForm::Button1Click(TObject *Sender)
-{
-	// Make sure the table in memory is clear
 
-}
 
 void __fastcall TTestForm::LoadTable( TStringGrid *Grid, TDataTable *Table)
 {
@@ -130,7 +126,8 @@ void __fastcall TTestForm::PopulateOutputGrid( TStringGrid *OutputGrid, TDataTab
 	OutputGrid->Model->RowCount = OutputTable->RowCount();
 
 	// Loop through the data source
-	for( int i = 0; i < OutputTable->RowCount(); i++ )
+  //	for( int i = 0; i < OutputTable->RowCount(); i++ )
+    for( int i = OutputTable->RowCount()-1; i >= 0 ; i-- )
 		{
 		// Get the row
 		TDataRow *Row1 = OutputTable->GetRow(i);
@@ -183,6 +180,20 @@ int __fastcall TTestForm::IsHeaderInGrid( TStringGrid *Grid, std::string String 
 
 	return Result;
 }
+
+void __fastcall TTestForm::Button1Click(TObject *Sender)
+{
+	OutputGrid->ClearContent();
+
+	TDataTable Grid1;
+	LoadTable( DataGrid1, &Grid1 );
+	Memo1->Lines->Add( Grid1.ToString().c_str() );
+	Grid1.Sort();
+    Memo1->Lines->Add( Grid1.ToString().c_str() );
+	PopulateOutputGrid( OutputGrid, &Grid1 );
+}
+
+
 void __fastcall TTestForm::Output1Plus2ButtonClick(TObject *Sender)
 {
 	TDataTable Grid1;
@@ -201,7 +212,10 @@ void __fastcall TTestForm::SetUnionButtonClick(TObject *Sender)
 	TDataTable Grid3;
 	LoadTable( DataGrid1, &Grid1 );
 	LoadTable( DataGrid2, &Grid2 );
-	Grid3 = SetUnion( Grid1, Grid2 );
+	Memo1->Lines->Add( Grid1.ToString().c_str() );
+	Memo1->Lines->Add( Grid2.ToString().c_str() );
+	Grid3 = Grid1.SetUnion( Grid2 );
+	Memo1->Lines->Add( Grid3.ToString().c_str() );
 	PopulateOutputGrid( OutputGrid, &Grid3 );
 }
 //---------------------------------------------------------------------------
@@ -213,19 +227,19 @@ void __fastcall TTestForm::SetDifferencesButtonClick(TObject *Sender)
 	TDataTable Grid3;
 	LoadTable( DataGrid1, &Grid1 );
 	LoadTable( DataGrid2, &Grid2 );
-	Grid3 = SetDifference( Grid1, Grid2 );
+	Grid3 = Grid1.SetDifference( Grid2 );
 	PopulateOutputGrid( OutputGrid, &Grid3 );
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TTestForm::IntersectionButtonClick(TObject *Sender)
 {
-   	TDataTable Grid1;
+	TDataTable Grid1;
 	TDataTable Grid2;
 	TDataTable Grid3;
 	LoadTable( DataGrid1, &Grid1 );
 	LoadTable( DataGrid2, &Grid2 );
-	Grid3 = Intersection( Grid1, Grid2 );
+	Grid3 = Grid1.Intersection( Grid2 );
 	PopulateOutputGrid( OutputGrid, &Grid3 );
 }
 //---------------------------------------------------------------------------
