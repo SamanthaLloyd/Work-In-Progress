@@ -73,7 +73,6 @@
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <UWP_CppLogo44>$(BDS)\bin\Artwork\Windows\UWP\cppreg_UwpDefault_44.png</UWP_CppLogo44>
         <UWP_CppLogo150>$(BDS)\bin\Artwork\Windows\UWP\cppreg_UwpDefault_150.png</UWP_CppLogo150>
-        <BCC_PCHName_Clang>OptibriumTestProjectPCH1.h</BCC_PCHName_Clang>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <BCC_OptimizeForSpeed>false</BCC_OptimizeForSpeed>
@@ -113,15 +112,12 @@
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppEnableHighDPI>true</AppEnableHighDPI>
-        <BCC_PCHName_Clang>OptibriumTestProjectPCH1.h</BCC_PCHName_Clang>
     </PropertyGroup>
     <ItemGroup>
-        <CppCompile Include="DataTable.cpp">
-            <BuildOrder>3</BuildOrder>
+        <CppCompile Include="DataTableDef.cpp">
+            <DependentOn>DataTableDef.h</DependentOn>
+            <BuildOrder>5</BuildOrder>
         </CppCompile>
-        <None Include="DataTable.h">
-            <BuildOrder>4</BuildOrder>
-        </None>
         <CppCompile Include="OptibriumTest1.cpp">
             <Form>TestForm</Form>
             <FormType>fmx</FormType>
@@ -218,7 +214,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="OptibriumTestProject.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\OptibriumTestProject.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>OptibriumTestProject.exe</RemoteName>
                         <Overwrite>true</Overwrite>
@@ -229,7 +225,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="OptibriumTestProject.tds" Configuration="Debug" Class="DebugSymbols">
+                <DeployFile LocalName="..\OptibriumTestProject.tds" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="Win32">
                         <RemoteName>OptibriumTestProject.tds</RemoteName>
                         <Overwrite>true</Overwrite>

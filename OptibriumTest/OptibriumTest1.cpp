@@ -194,3 +194,39 @@ void __fastcall TTestForm::Output1Plus2ButtonClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TTestForm::SetUnionButtonClick(TObject *Sender)
+{
+	TDataTable Grid1;
+	TDataTable Grid2;
+	TDataTable Grid3;
+	LoadTable( DataGrid1, &Grid1 );
+	LoadTable( DataGrid2, &Grid2 );
+	Grid3 = SetUnion( Grid1, Grid2 );
+	PopulateOutputGrid( OutputGrid, &Grid3 );
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TTestForm::SetDifferencesButtonClick(TObject *Sender)
+{
+	TDataTable Grid1;
+	TDataTable Grid2;
+	TDataTable Grid3;
+	LoadTable( DataGrid1, &Grid1 );
+	LoadTable( DataGrid2, &Grid2 );
+	Grid3 = SetDifference( Grid1, Grid2 );
+	PopulateOutputGrid( OutputGrid, &Grid3 );
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TTestForm::IntersectionButtonClick(TObject *Sender)
+{
+   	TDataTable Grid1;
+	TDataTable Grid2;
+	TDataTable Grid3;
+	LoadTable( DataGrid1, &Grid1 );
+	LoadTable( DataGrid2, &Grid2 );
+	Grid3 = Intersection( Grid1, Grid2 );
+	PopulateOutputGrid( OutputGrid, &Grid3 );
+}
+//---------------------------------------------------------------------------
+
