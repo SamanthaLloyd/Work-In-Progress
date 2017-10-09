@@ -133,8 +133,6 @@ void __fastcall TTestForm::PopulateOutputGrid( TStringGrid *OutputGrid, TDataTab
 		TDataRow *Row1 = OutputTable->GetRow(i);
 		if( Row1 )
 			{
-			int Melandru = Row1->ValueCount();
-
 			for( int j = 0; j < Row1->ValueCount(); j++ )
 				{
 				// Look to see if the grid already has a header with this name
@@ -181,19 +179,6 @@ int __fastcall TTestForm::IsHeaderInGrid( TStringGrid *Grid, std::string String 
 	return Result;
 }
 
-void __fastcall TTestForm::Button1Click(TObject *Sender)
-{
-	OutputGrid->ClearContent();
-
-	TDataTable Grid1;
-	LoadTable( DataGrid1, &Grid1 );
-	Memo1->Lines->Add( Grid1.ToString().c_str() );
-	Grid1.Sort();
-    Memo1->Lines->Add( Grid1.ToString().c_str() );
-	PopulateOutputGrid( OutputGrid, &Grid1 );
-}
-
-
 void __fastcall TTestForm::Output1Plus2ButtonClick(TObject *Sender)
 {
 	TDataTable Grid1;
@@ -212,10 +197,7 @@ void __fastcall TTestForm::SetUnionButtonClick(TObject *Sender)
 	TDataTable Grid3;
 	LoadTable( DataGrid1, &Grid1 );
 	LoadTable( DataGrid2, &Grid2 );
-	Memo1->Lines->Add( Grid1.ToString().c_str() );
-	Memo1->Lines->Add( Grid2.ToString().c_str() );
 	Grid3 = Grid1.SetUnion( Grid2 );
-	Memo1->Lines->Add( Grid3.ToString().c_str() );
 	PopulateOutputGrid( OutputGrid, &Grid3 );
 }
 //---------------------------------------------------------------------------

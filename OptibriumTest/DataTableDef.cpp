@@ -8,6 +8,61 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 
+bool CompareDataRows::operator()( const TDataRow &Row1, const TDataRow &Row2 )
+{
+	// This function returns true if Row1 is < Row2
+	bool Result = false;
+
+	// First inspect the number of items
+    // If Row 1 has fewer than Row 2 no need to continue
+	if( Row1.ValueCount() < Row2.ValueCount() )
+		{
+		Result = true;
+		}
+
+	if( !Result )
+		{
+		// Now look at the rows themselves
+        // Compare 1 with 1, 2 with 2 as the multimap sorts out the order
+		bool FoundDifference = false;
+        // Stop if we find a difference. If Row1 is greater than Row2, there's no need to continue
+		for( int i = 0; i < Row1.ValueCount() && !FoundDifference;  i++ )
+			{
+			std::string Key1 = Row1.GetKey(i);
+			std::string Key2 = Row2.GetKey(i);
+			// Compare the strings
+			if( strcmp( Key1.c_str(), Key2.c_str() ) == 0 )
+				{
+                // Strings match so check the values
+				if( Row1.ValueByKey( Key1 ) < Row2.ValueByKey( Key2 ) )
+					{
+					FoundDifference = true;
+					Result = true;
+					}
+				else
+					{
+					// Row 1's value is not less than Row 2
+                    // If they aren't equal then Row 1 must be larger, so we can stop looking
+					if( Row1.ValueByKey( Key1 ) != Row2.ValueByKey( Key2 ) )
+						{
+						FoundDifference = true;
+						}
+					}
+
+				}
+			else
+				{
+                // Otherwise look at the string comparison
+				if( strcmp( Key1.c_str(), Key2.c_str() ) < 0 )
+					{
+                    Result = true;
+                    }
+				}
+			}
+		}
+
+	return Result;
+}
 
 #pragma region TDataValue definition
 
@@ -30,7 +85,6 @@ TDataValue::TDataValue(const TDataValue &ToCopy)
 	FInt = ToCopy.FInt;
 	FFloat = ToCopy.FFloat;
 	FString = ToCopy.FString;
-
 }
 
 TDataValue::TDataValue(int ValueIn)
@@ -52,6 +106,95 @@ TDataValue::TDataValue(std::string ValueIn)
 TDataValue::~TDataValue()
 {
 
+}
+
+int TDataValue::AsInt()
+{
+	// returns the data value as an int
+	int Result = -1;
+	switch (FOriginalType)
+	{
+	case dvtString:
+		// translate it
+		Result = atoi(FString.c_str());
+		break;
+	case dvtInt:
+		// Native
+		Result = FInt;
+		break;
+	case dvtFloat:
+		// this will round off
+		Result = FFloat;
+		break;
+	}
+
+	return Result;
+}
+
+float TDataValue::AsFloat()
+{
+	// returns the data value as a float
+	int Result = -1.0;
+	switch (FOriginalType)
+	{
+	case dvtString:
+		// translate it
+		Result = atof(FString.c_str());
+		break;
+	case dvtInt:
+		// Translate
+		Result = FInt;
+		break;
+	case dvtFloat:
+		//Native
+		Result = FFloat;
+		break;
+	}
+
+	return Result;
+}
+
+std::string TDataValue::AsString()
+{
+	// returns the data value as a string
+	std::string Result = "";
+	switch (FOriginalType)
+	{
+	case dvtString:
+		//Native
+		Result = FString;
+		break;
+	case dvtInt:
+		Result = TToString( FInt );
+		break;
+	case dvtFloat:
+		Result = TToString( FFloat );
+		break;
+	}
+	return Result;
+}
+
+// This set of functions tell you the original type of the value
+bool TDataValue::IsInt()
+{
+	if (FOriginalType == dvtInt)
+		return true;
+	else
+		return false;
+}
+bool TDataValue::IsFloat()
+{
+	if (FOriginalType == dvtFloat)
+		return true;
+	else
+		return false;
+}
+bool TDataValue::IsString()
+{
+	if (FOriginalType == dvtString)
+		return true;
+	else
+		return false;
 }
 
 bool TDataValue::Set(int ValueIn)
@@ -80,93 +223,10 @@ bool TDataValue::Set(std::string ValueIn)
 	return FSet;
 }
 
-int TDataValue::AsInt()
-{
-	int Result = -1;
-	switch (FOriginalType)
-	{
-	case dvtString:
-		// translate it
-		Result = atoi(FString.c_str());
-		break;
-	case dvtInt:
-		// Native
-		Result = FInt;
-		break;
-	case dvtFloat:
-		// this will round off, but I guess that's what we want?
-		Result = FFloat;
-		break;
-	}
-
-	return Result;
-}
-
-float TDataValue::AsFloat()
-{
-	int Result = -1.0;
-	switch (FOriginalType)
-	{
-	case dvtString:
-		// translate it
-		Result = atof(FString.c_str());
-		break;
-	case dvtInt:
-		// Translate
-		Result = FInt;
-		break;
-	case dvtFloat:
-		//Native
-		Result = FFloat;
-		break;
-	}
-
-	return Result;
-}
-
-std::string TDataValue::AsString()
-{
-	std::string Result = "";
-	switch (FOriginalType)
-	{
-	case dvtString:
-		//Native
-		Result = FString;
-		break;
-	case dvtInt:
-		Result = TToString( FInt );
-		break;
-	case dvtFloat:
-		Result = TToString( FFloat );
-		break;
-	}
-	return Result;
-}
-
-bool TDataValue::IsInt()
-{
-	if (FOriginalType == dvtInt)
-		return true;
-	else
-		return false;
-}
-bool TDataValue::IsFloat()
-{
-	if (FOriginalType == dvtFloat)
-		return true;
-	else
-		return false;
-}
-bool TDataValue::IsString()
-{
-	if (FOriginalType == dvtString)
-		return true;
-	else
-		return false;
-}
-
 bool TDataValue::operator==(const TDataValue &Incoming)
 {
+	// Returns true if Incoming has the same relevant values as 'this'
+
 	bool Result = false;
 	if( this == &Incoming )
 		{
@@ -210,6 +270,7 @@ bool TDataValue::operator==(const TDataValue &Incoming)
 
 bool TDataValue::operator!=(const TDataValue &Incoming)
 {
+    // Inverse of ==
 	bool Result = true;
 	if( *this == Incoming )
 		{
@@ -226,43 +287,46 @@ bool TDataValue::operator<(const TDataValue &Incoming)
 		// Check for self equalling
 		Result = false;
 		}
-
-	// If 'this' isn't set but incoming is
-	// or the types are different
-	// then the result holds true
-	if( this->FSet < Incoming.FSet ||
-		( this->FSet == Incoming.FSet && this->FOriginalType < Incoming.FOriginalType ) )
+	else
 		{
-		Result = true;
-		}
 
-	// If both are set and the same type, compare the types
-	if( this->FSet == Incoming.FSet &&
-		this->FOriginalType == Incoming.FOriginalType )
-		{
-		switch( this->FOriginalType )
+		// If 'this' isn't set but incoming is
+		// or the types are different
+		// then the result holds true
+		if( this->FSet < Incoming.FSet ||
+			( this->FSet == Incoming.FSet && this->FOriginalType < Incoming.FOriginalType ) )
 			{
-			case dvtInt:
-				if( this->FInt < Incoming.FInt )
-					{
+			Result = true;
+			}
+
+		// If both are set and the same type, compare the types
+		if( this->FSet == Incoming.FSet &&
+			this->FOriginalType == Incoming.FOriginalType )
+			{
+			switch( this->FOriginalType )
+				{
+				case dvtInt:
+					if( this->FInt < Incoming.FInt )
+						{
+						Result = true;
+						}
+					break;
+				case dvtFloat:
+					if( this->FFloat < Incoming.FFloat )
+						{
+						Result = true;
+						}
+					break;
+				case dvtString:
+					if( this->FString < Incoming.FString )
+						{
+						Result = true;
+						}
+					break;
+				default:
 					Result = true;
-					}
-				break;
-			case dvtFloat:
-				if( this->FFloat < Incoming.FFloat )
-					{
-					Result = true;
-					}
-				break;
-			case dvtString:
-				if( this->FString < Incoming.FString )
-					{
-					Result = true;
-					}
-				break;
-			default:
-				Result = true;
-				break;
+					break;
+				}
 			}
 		}
 	return Result;
@@ -283,13 +347,6 @@ TDataRow::TDataRow( const TDataRow &ToCopy )
 	FRow.clear();
 	FRow.insert(ToCopy.FRow.begin(), ToCopy.FRow.end());
 }
-           /*
-TDataRow::TDataRow( TDataRow &&ToCopy )
-{
-	// Copy constructor
-	FRow.clear();
-	FRow.insert(ToCopy.FRow.begin(), ToCopy.FRow.end());
-}          */
 
 TDataRow::~TDataRow()
 {
@@ -298,29 +355,16 @@ TDataRow::~TDataRow()
 
 void TDataRow::Insert( std::string Key, TDataValue Value )
 {
+	// Insert Key and Value into the Row
+
 	// Not passing the key by reference saves us a type headache
     // Possible room for improvement
 	FRow.insert( std::make_pair( Key, Value ) );
 }
 
-TDataValue TDataRow::ValueByKey( std::string Key ) const
-{
-	TDataValue Result;
-
-	if( Key.length() )
-		{
-		std::multimap< std::string, TDataValue >::const_iterator it;
-		it = FRow.find( Key );
-		if( it != FRow.end() )
-			{
-			Result = it->second;
-			}
-		}
-	return Result;
-}
-
 std::string TDataRow::GetKey( unsigned int Position ) const
 {
+	// Returns the Key at Position
 	std::string Result = "";
 	if( FRow.size() > Position )
 		{
@@ -333,6 +377,22 @@ std::string TDataRow::GetKey( unsigned int Position ) const
 			Count++;
 			}
 		Result = it->first;
+		}
+	return Result;
+}
+
+TDataValue TDataRow::ValueByKey( std::string Key ) const
+{
+    // Returns the data value for the first instance of Key
+	TDataValue Result;
+	if( Key.length() )
+		{
+		std::multimap< std::string, TDataValue >::const_iterator it;
+		it = FRow.find( Key );
+		if( it != FRow.end() )
+			{
+			Result = it->second;
+			}
 		}
 	return Result;
 }
@@ -363,51 +423,6 @@ bool TDataRow::operator==(const TDataRow &Incoming)
 	return Result;
 }
 
-TDataRow &TDataRow::operator=(TDataRow Incoming)
-{
-	// copy assignment
-	if( this != &Incoming )
-		{
-		// copy the contents of the row
-		FRow.clear();
-		FRow.insert(Incoming.FRow.begin(), Incoming.FRow.end());
-		}
-	return *this;
-}
-
-              /*
-TDataRow &TDataRow::operator=(const TDataRow &&Incoming)
-{
-	return *this = Incoming;
-}
-											   /*
-TDataRow &TDataRow::operator=(TDataRow Incoming)
-{
-    return this = Incoming;
-}        */
-			 /*
-bool operator<(const TDataRow &First, const TDataRow &Second)
-{
-	// this is < Incoming if we compare keys or values.
-	bool Result = true;
-	std::multimap< std::string, TDataValue >::const_iterator it1 = First.FRow.begin();
-	std::multimap< std::string, TDataValue >::const_iterator it2 = Second.FRow.begin();
-	for( ; it1 != First.FRow.end() && it2 != Second.FRow.end() && Result; it1++, it2++ )
-		{
-		std::string TmpStr1 = it1->first;
-		std::string TmpStr2 = it2->first;
-		TDataValue Temp1( it1->second );
-		TDataValue Temp2( it2->second );
-		if(
-		if( it1->first >= it2->first && !(Temp1 < Temp2 ) )
-			{
-			Result = false;
-			}
-
-		}
-	return Result;
-}         */
-
 bool TDataRow::operator<( const TDataRow &Incoming )
 {
 	bool Result = true;
@@ -425,16 +440,18 @@ bool TDataRow::operator<( const TDataRow &Incoming )
 	return Result;
 }
 
-std::string TDataRow::ToString()
-{
-	std::string Result = "";
 
-	std::multimap< std::string, TDataValue >::iterator it1 = this->FRow.begin();
-	for( ; it1 != this->FRow.end(); it1++ )
+TDataRow &TDataRow::operator=(TDataRow Incoming)
+{
+	// copy assignment
+	if( this != &Incoming )
 		{
-        Result += "Header: " + it1->first + ". Value: " + it1->second.AsString() + "\r\n";
-        }
-    return Result;
+        // clear existing
+		FRow.clear();
+		// copy the contents of the row
+		FRow.insert(Incoming.FRow.begin(), Incoming.FRow.end());
+		}
+	return *this;
 }
 
 #pragma endregion
@@ -448,17 +465,17 @@ TDataTable::TDataTable()
 
 TDataTable::~TDataTable()
 {
-
-}
-
-void TDataTable::Add( TDataRow &Row )
-{
-	FRows.push_back( Row );
+	Clear();
 }
 
 void TDataTable::Clear( )
 {
 	FRows.clear();
+}
+
+void TDataTable::Add( TDataRow &Row )
+{
+	FRows.push_back( Row );
 }
 
 TDataRow *TDataTable::GetRow( unsigned int Row )
@@ -498,113 +515,41 @@ TDataTable & TDataTable::operator+=(const TDataTable &rhs)
 	return *this;
 }
 
-
-const TDataTable TDataTable::operator+(const TDataTable &OtherTable) const
-{
-	// use the += operator to simplify this
-	return TDataTable(*this) += OtherTable;
-}
-
-#pragma endregion
-
-bool less_than_key::operator()( const TDataRow &Row1, const TDataRow &Row2 )
-{
-	bool Result = false;
-
-	if( Row1.ValueCount() < Row2.ValueCount() )
-		{
-		Result = true;
-		}
-
-	if( !Result )
-		{
-		bool FoundDifference = false;
-		for( int i = 0; i < Row1.ValueCount() && !FoundDifference;  i++ )
-			{
-			std::string Key1 = Row1.GetKey(i);
-			std::string Key2 = Row2.GetKey(i);
-			if( strcmp( Key1.c_str(), Key2.c_str() ) == 0 )
-				{
-				if( Row1.ValueByKey( Key1 ) < Row2.ValueByKey( Key2 ) )
-					{
-					FoundDifference = true;
-					Result = true;
-					}
-				else
-					{
-					if( Row1.ValueByKey( Key1 ) != Row2.ValueByKey( Key2 ) )
-						{
-						FoundDifference = true;
-						}
-                    }
-
-				}
-			else
-				{
-				Result = strcmp( Key1.c_str(), Key2.c_str() );
-                }
-            }
-        }
-
-	return Result;
-}
-
-#pragma region Other functions
-
-void TDataTable::Sort()
-{
-	std::sort( FRows.begin(), FRows.end(), less_than_key() );
-}
-
 TDataTable TDataTable::SetUnion( TDataTable &Table1 )
 {
-	// Use stl::set_union
 	// requires a sorted data set
-	std::sort( FRows.begin(), FRows.end(), less_than_key() );
-	std::sort( Table1.FRows.begin(), Table1.FRows.end(), less_than_key() );
+	std::sort( FRows.begin(), FRows.end(), CompareDataRows() );
+	std::sort( Table1.FRows.begin(), Table1.FRows.end(), CompareDataRows() );
 
+	// Then use std function with CompareDataRows
 	TDataTable OutputTable;
-	std::set_union( FRows.begin(), FRows.end(), Table1.FRows.begin(), Table1.FRows.end(), std::back_inserter( OutputTable.FRows ), less_than_key() );
+	std::set_union( FRows.begin(), FRows.end(), Table1.FRows.begin(), Table1.FRows.end(), std::back_inserter( OutputTable.FRows ), CompareDataRows() );
 	return OutputTable;
 }
 
 TDataTable TDataTable::SetDifference( TDataTable &Table1  )
 {
 	// requires a sorted data set
-	std::sort( FRows.begin(), FRows.end(), less_than_key() );
-	std::sort( Table1.FRows.begin(), Table1.FRows.end(), less_than_key() );
+	std::sort( FRows.begin(), FRows.end(), CompareDataRows() );
+	std::sort( Table1.FRows.begin(), Table1.FRows.end(), CompareDataRows() );
 
+	// Then use std function with CompareDataRows
 	TDataTable OutputTable;
-	std::set_difference( FRows.begin(), FRows.end(), Table1.FRows.begin(), Table1.FRows.end(), std::back_inserter( OutputTable.FRows ), less_than_key() );
+	std::set_difference( FRows.begin(), FRows.end(), Table1.FRows.begin(), Table1.FRows.end(), std::back_inserter( OutputTable.FRows ), CompareDataRows() );
 	return OutputTable;
 }
 
 
 TDataTable TDataTable::Intersection( TDataTable &Table1)
 {
-	// requires a sorted data set	std::sort( Table1.FRows.begin(), Table1.FRows.end() );
-	std::sort( FRows.begin(), FRows.end(), less_than_key() );
-	std::sort( Table1.FRows.begin(), Table1.FRows.end(), less_than_key() );
+	// requires a sorted data set
+	std::sort( FRows.begin(), FRows.end(), CompareDataRows() );
+	std::sort( Table1.FRows.begin(), Table1.FRows.end(), CompareDataRows() );
 
+	// Then use std function with CompareDataRows
 	TDataTable OutputTable;
-	std::set_intersection( FRows.begin(), FRows.end(), Table1.FRows.begin(), Table1.FRows.end(), std::back_inserter( OutputTable.FRows ), less_than_key() );
+	std::set_intersection( FRows.begin(), FRows.end(), Table1.FRows.begin(), Table1.FRows.end(), std::back_inserter( OutputTable.FRows ), CompareDataRows() );
 	return OutputTable;
 }
-
-std::string TDataTable::ToString()
-{
-	std::string Result;
-
-	Result = "Grid:\r\n";
-	for( unsigned int i = 0; i < FRows.size(); i++ )
-		{
-		Result += "Row " + TToString(i) + ":\r\n";
-		Result += FRows[i].ToString();
-		}
-
-	return Result;
-}
-
-
 
 #pragma endregion

@@ -21,17 +21,15 @@ class TTestForm : public TForm
 __published:	// IDE-managed Components
 	TStringGrid *DataGrid1;
 	TStringGrid *DataGrid2;
-	TLabel *Label1;
-	TLabel *Label2;
+	TLabel *Grid1Label;
+	TLabel *Grid2Label;
 	TStringGrid *OutputGrid;
 	TButton *OutputGrid1Button;
 	TButton *Output1Plus2Button;
 	TButton *SetUnionButton;
 	TButton *SetDifferencesButton;
 	TButton *IntersectionButton;
-	TButton *Button1;
-	TMemo *Memo1;
-	void __fastcall Button1Click(TObject *Sender);
+	TLabel *OutputGrid1;
 	void __fastcall OutputGrid1ButtonClick(TObject *Sender);
 	void __fastcall Output1Plus2ButtonClick(TObject *Sender);
 	void __fastcall SetUnionButtonClick(TObject *Sender);

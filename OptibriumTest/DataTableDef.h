@@ -14,6 +14,7 @@
 template<class T>
 std::string TToString(T Value)
 {
+    // Template class to simplify ToString
 	std::stringstream StringStream;
 	std::string String;
 	StringStream << Value;
@@ -22,8 +23,17 @@ std::string TToString(T Value)
 	return String;
 }
 
+class TDataRow;
+struct CompareDataRows
+{
+    // This is a functor that returns true if Row1 < Row2
+	bool operator()( const TDataRow &Row1, const TDataRow &Row2 );
+};
+
+// Supported data types
 enum DataValueType { dvtUnknown, dvtInt, dvtFloat, dvtString };
 
+// This represents a value in the table
 class TDataValue
 {
 private:
@@ -54,41 +64,34 @@ public:
 	bool Set(float ValueIn);
 	bool Set(std::string ValueIn);
 
+	// Comparison operators
 	bool operator == ( const TDataValue &Incoming );
 	bool operator != ( const TDataValue &Incoming );
 	bool operator < ( const TDataValue &Incoming );
-
 };
 
+// This class represents a row of data as a multimap
 class TDataRow
 {
 private:
-
+    std::multimap< std::string, TDataValue >FRow;
 public:
 	TDataRow();
-	TDataRow( const TDataRow &ToCopy );
-//    TDataRow( TDataRow &&ToCopy );
+	TDataRow( const TDataRow &ToCopy ); // Copy constructor
+
 	~TDataRow();
-    std::multimap< std::string, TDataValue >FRow;
 
 	void Insert( std::string Key, TDataValue Value );
-	TDataValue TDataRow::ValueByKey( std::string Key ) const;
 	std::string TDataRow::GetKey( unsigned int Position ) const;
+	TDataValue TDataRow::ValueByKey( std::string Key ) const;
 	int ValueCount() const;
 
+    // Comparison operators
 	bool operator==(const TDataRow &Incoming);
-	bool operator!=(const TDataRow &Incoming);
-	TDataRow &operator=(TDataRow Incoming);  // Copy assignment
-//	TDataRow &operator=(const TDataRow &&Incoming); // Move assignment
-// 	friend bool operator<(const TDataRow &First, const TDataRow &Second);
 	bool operator<( const TDataRow &Incoming );
 
-	std::string ToString();
-};
+	TDataRow &operator=(TDataRow Incoming); // Copy assignment
 
-struct less_than_key
-{
-	bool operator()( const TDataRow &Row1, const TDataRow &Row2 );
 };
 
 class TDataTable
@@ -102,19 +105,15 @@ public:
 	void Clear( );
 	void Add( TDataRow &Row );
 	TDataRow *GetRow( unsigned int i );
-	int RowCount() const ;
 	TDataRow GetRow( unsigned int Row ) const;
-	//Operators
+	int RowCount() const ;
 
+	//Operator, only need +=
 	TDataTable & TDataTable::operator+=(const TDataTable &rhs);
-	const TDataTable TDataTable::operator+(const TDataTable &OtherTable) const;
-
-	void Sort();
 
 	TDataTable SetUnion( TDataTable &Table1 );
 	TDataTable SetDifference( TDataTable &Table1 );
 	TDataTable Intersection( TDataTable &Table1 );
-	std::string ToString();
 };
 
 
